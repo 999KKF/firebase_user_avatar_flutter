@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_user_avatar_flutter/app/home/about_page.dart';
 import 'package:firebase_user_avatar_flutter/common_widgets/avatar.dart';
 import 'package:firebase_user_avatar_flutter/models/avatar_reference.dart';
@@ -10,16 +11,17 @@ import 'package:firebase_user_avatar_flutter/services/image_picker_service.dart'
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+// import 'package:firebase/firebase.dart';
 
 class HomePage extends StatelessWidget {
-  Future<void> _signOut(BuildContext context) async {
-    try {
-      final auth = Provider.of<FirebaseAuthService>(context, listen: false);
-      await auth.signOut();
-    } catch (e) {
-      print(e);
-    }
-  }
+  // Future<void> _signOut(BuildContext context) async {
+  //   try {
+  //     final auth = Provider.of<FirebaseAuthService>(context, listen: false);
+  //     await auth.signOut();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   Future<void> _onAbout(BuildContext context) async {
     await Navigator.of(context).push(
@@ -35,7 +37,7 @@ class HomePage extends StatelessWidget {
       // 1. Get image from picker
       final imagePicker =
           Provider.of<ImagePickerService>(context, listen: false);
-      final file = await imagePicker.pickImage(source: ImageSource.gallery);
+      final file = await imagePicker.pickImage(source: ImageSource.camera);
       if (file != null) {
         // 2. Upload to storage
         final storage =
@@ -63,15 +65,18 @@ class HomePage extends StatelessWidget {
         ),
         actions: <Widget>[
           FlatButton(
-            child: Text(
-              'Logout',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
+              child: Text(
+                'Logout',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: Colors.white,
+                ),
               ),
-            ),
-            onPressed: () => _signOut(context),
-          ),
+              onPressed: () async => await FirebaseAuth.instance.signOut()
+              // FirebaseAuth.instance
+              //     .signOut()
+              //     .then((value) => null), //_signOut(context),
+              ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(130.0),
